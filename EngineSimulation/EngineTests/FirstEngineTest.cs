@@ -27,6 +27,10 @@ namespace EngineSimulation.EngineTests
 
         public void Execute()
         {
+            // Print header for table
+            Console.WriteLine("{0,10}   |{1,10}   |{2,10}", "sec", "r/sec^2", '\u00B0'+ "C\n");
+
+            // Simulation cycle
             while (_engine.CurrentTemp < _engine.T_max)
             {
                 // Print intermediate result
@@ -66,7 +70,10 @@ namespace EngineSimulation.EngineTests
                 _currentTime++;
             }
 
-            Console.WriteLine("\n\n\n Времени до перегрева: " + _currentTime);
+            // Print final result
+            printResult();
+            Console.WriteLine("\n\n\n Время до перегрева: " + _currentTime + " сек");
+            Console.ReadKey();
         }
 
         // Interpolation method
@@ -113,10 +120,10 @@ namespace EngineSimulation.EngineTests
             return guess;
         }
 
+        // Print result method
         public void printResult()
         {
-            Console.WriteLine("Ответ: ");
-            Console.Write("Time: " + _currentTime + " V: " + _engine.CurrentSpeed + " temp: " + _engine.CurrentTemp + "\n");
+            Console.WriteLine("{0,10}   |{1,10}   |{2,10}", _currentTime, _engine.CurrentSpeed, _engine.CurrentTemp);
         }
 
     }

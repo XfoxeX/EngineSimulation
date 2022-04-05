@@ -50,6 +50,7 @@ namespace EngineSimulation
 
             ///////////////////////////////////////////
             /// Create first engine test
+            Console.WriteLine("Введите температуру окружающей среды: ");
             var firstEngineTest = new FirstEngineTest(firstEngine, float.Parse(Console.ReadLine()));
 
             firstEngineTest.Execute();
