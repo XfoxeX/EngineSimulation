@@ -11,6 +11,10 @@ namespace EngineSimulation.EngineTests
     {
         private RootEngine _engine;
         private int _currentTime;
+        // Engine heating rate
+        private float _vH;
+        // Engine cooling rate
+        private float _vC;
         // Environment temperature
         public float EnvTemp { get; set; }
 
@@ -25,43 +29,68 @@ namespace EngineSimulation.EngineTests
         {
             while (_engine.CurrentTemp < _engine.T_max)
             {
-                if (_engine.VM.TryGetValue(_engine.CurrentSpeed,  out float value))
+                // Print intermediate result
+                printResult();
+
+                // Fetch acceleration
+                if (_engine.VM.TryGetValue(_engine.CurrentSpeed, out float value))
                 {
                     // If relationship between Rotation speed and Torque have current speed
+                    _engine.CurrentM = value;
                     _engine.Accel = value / _engine.I;
-
-                    
                 }
                 else
                 {
                     // Fetch current Torque by interpolation method
                     if (_engine.VM.Last().Key > _engine.CurrentSpeed)
                     {
-                        interpolation();
+                        _engine.CurrentM = interpolation();
+                        _engine.Accel = _engine.CurrentM / _engine.I;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("Выход за рамки линейной зависимости V с M!");
                     }
 
                 }
 
+                //  Fetch next engine heating rate
+                _vH = _engine.CurrentM * _engine.H_m + (float)Math.Pow(_engine.CurrentSpeed, 2) * _engine.H_v;
+                // Fetch next engine cooling rate
+                _vC = _engine.C * (EnvTemp - _engine.CurrentTemp);
+                // Fetch next engine temp
+                _engine.CurrentTemp += (_vC + _vH) * _currentTime;
+                // Fetch next speed
+                _engine.CurrentSpeed += _engine.Accel;
 
-
-
+                _currentTime++;
             }
+
+            Console.WriteLine("\n\n\n Времени до перегрева: " + _currentTime);
         }
 
+        // Interpolation method
         public float interpolation()
         {
-            //foreach(var item in _engine.VM.Keys)
-            //{
 
-            //    Console.WriteLine(item);
-            //}
-            _engine.CurrentSpeed = 1;
-            Console.WriteLine(_engine.VM.ElementAt(binSearch()).Key);
-            Console.WriteLine(_engine.VM.ElementAt(binSearch()-1).Key);
-            return 0;
+            // Interpolation result
+            float currentM;
+
+            // Fetch two elements near the current speed
+            int max = binSearch();
+
+            // Fetch interpolation elements
+            float maxV = _engine.VM.ElementAt(max).Key;
+            float maxM = _engine.VM[maxV];
+            float minV = _engine.VM.ElementAt(max-1).Key;
+            float minM = _engine.VM[minV];
+
+            // Fetch current M
+            currentM = minM + ( (_engine.CurrentSpeed - minV) / (maxV - minV) * (maxM - minM) );
+            return currentM;
         }
 
-        // Fetch two elements near the current speed
+        // Fetch two elements near the current speed method
         public int binSearch()
         {
             int low = 0;
@@ -82,6 +111,12 @@ namespace EngineSimulation.EngineTests
             }
 
             return guess;
+        }
+
+        public void printResult()
+        {
+            Console.WriteLine("Ответ: ");
+            Console.Write("Time: " + _currentTime + " V: " + _engine.CurrentSpeed + " temp: " + _engine.CurrentTemp + "\n");
         }
 
     }

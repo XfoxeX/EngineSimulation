@@ -50,9 +50,9 @@ namespace EngineSimulation
 
             ///////////////////////////////////////////
             /// Create first engine test
-            var firstEngineTest = new FirstEngineTest(firstEngine, 5);
+            var firstEngineTest = new FirstEngineTest(firstEngine, float.Parse(Console.ReadLine()));
 
-            firstEngineTest.interpolation();
+            firstEngineTest.Execute();
 
         }
     }

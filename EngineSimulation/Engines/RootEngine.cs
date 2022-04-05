@@ -23,6 +23,7 @@ namespace EngineSimulation.Engines
 
         public float CurrentTemp { get; set; }
         public float CurrentSpeed { get; set; }
+        public float CurrentM { get; set; }
         // Acceleration
         public float Accel { get; set; }
     }
