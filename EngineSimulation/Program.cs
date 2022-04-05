@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EngineSimulation.Engines;
+using EngineSimulation.EngineTests;
 
 namespace EngineSimulation
 {
@@ -49,12 +50,10 @@ namespace EngineSimulation
 
             ///////////////////////////////////////////
             /// Create first engine test
+            var firstEngineTest = new FirstEngineTest(firstEngine, 5);
 
+            firstEngineTest.interpolation();
 
-
-            // Берем данные из конфигурации, обрабатываем, запускаем тест
-
-            // Main берет весь инпут и пускает в работу во все классы
         }
     }
 }
